@@ -1,0 +1,10 @@
+
+.hot {
+    -fx-font-weight: 900;
+    -fx-text-fill: orangered;
+    -fx-font-size: 16;
+}
+
+.active {
+    -fx-stroke-width: 5px;
+}

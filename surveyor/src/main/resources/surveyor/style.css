@@ -1,0 +1,37 @@
+
+.root{
+    -fx-background-image: url(grefrath.png);
+    -fx-background-repeat: no-repeat;
+}
+
+.label.selected {
+    -fx-font-weight: bold;
+}
+
+
+.check-box:selected .mark .blue{
+    -fx-background-color: blue;
+}
+
+.check-box:selected .mark .red{
+    -fx-background-color: #ff0000;
+}
+
+.check-box:selected .mark .green{
+    -fx-background-color: #008000;
+}
+
+.red {
+    -fx-text-fill: #ff0000;
+}
+
+.green {
+    -fx-text-fill: #008000;
+}
+.blue {
+    -fx-text-fill: #0000ff;
+}
+
+.table-column{
+    -fx-alignment: CENTER-RIGHT;
+}

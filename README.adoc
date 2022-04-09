@@ -1,0 +1,119 @@
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+:imagesdir: images/
+endif::[]
+
+:sectnums!:
+
+== FX Triangulation
+
+=== Introduction
+
+The widget you will create is to do https://en.wikipedia.org/wiki/Polygon_triangulation[Polygon triangulation].
+It is an activity done by surveyor teams.
+
+You'll develop (TDD) some missing parts of a custom https://en.wikipedia.org/wiki/Graphical_widget[widget]
+with its own controller and https://openjfx.io/javadoc/16/javafx.graphics/javafx/scene/Node.html[Java FX Node],
+in this particular case a https://openjfx.io/javadoc/16/javafx.graphics/javafx/scene/Group.html[Group]
+
+The use case for this widget is a Surveyor-application. Using this surveyor application, and applying triangulation, you are able to determine the area and the border length of a piece of land, bordered by a polygon. This application is completely given and acts as demo. The demo application will only work after you have finished the assignment!
+
+The advantages of developing a widget in a separate project are:
+
+* Reusability
+* Separation of concerns
+* Example of work separation: the widget can be tested and developed by someone, the
+actual application in which it is used can be developed by someone else.
+* Didactics: show the use and impact of JPMS and the possibility to create widgets.
+
+image::triangle-bindings.svg[title="Conventions in the triangulator"]
+
+*Roles of the bindings*
+
+* The corners of the triangle are represented as JavaFX Circles. Their center coordinates will change after drag/drop. These coordinates are Properties and therefore Observable.  
+* *Length of leg* The leg of a triangle is used to determine the distance between the corners. When they coincide with the legs of a polygon, they measure the length of that leg. The length is a binding that observes the start and end point of a line.
+* *Midpoint* of the lines are used in the GUI to position the attached length- and
+  name labels of the triangle edges. The midpoint of a line is a binding that observes the start and end point of the line and changes if one of these change.
+* *Center point or center of gravity of the triangle*. Used to place the area label of the triangle. The center point is a binding that observes the corner points of the Triangle and changes if one of these changes. The center point is simply determined by taking the average of the three x-values as X and the average of the three y-values as Y.
+* *Active lines* To be able to measure the sum of lengths of the edges, some, but not all edges of the triangle are relevant. A line can be set 'active' in order to let it count in the sum of lengths; if you'd like to find the circumference of a Triangle, you should set all its lines to active.
+
+=== Use of the Triangulator in the Surveyor application
+
+image::surveyor-in-use.png[title="Surveyor application GUI"]
+
+The Triangulator is a component that is used in the Surveyor App.
+You will find the app in your repository too, as an example to play with, but it has no tests nor required business code for you to complete.
+
+The functionality is more or less given by the (picture) of the UI:
+
+* The user is able to manipulate the corner points of the triangle by dragging them with a mouse, or by setting the individual coordinates of the points in text fields (this is realized by a bidirectional binding).
+* The UI shows the area measured by the triangulator in a separate label 'Area'.
+* The UI shows the summed length of active lines (which can be activated or deactivated by the checkboxes) in a separate label 'Sum'.
+* The *total area* and *total border length* can be obtained via a process of triangulation. In the example above, the polygon consists of 4 triangles; of the one selected, of course the complete area should be taken into account, but only the length of the blue and the red lines is relevant to the computation of the total border length. Therefore, these lines are activated with the check boxes. Clicking the 'Measure' button will store the subresults for this part of the polygon. Properly applying this procedure for the remaining 3 traingles that are part of the polygon, wil result in finding the correct total area and total border length. 
+* The polygon is currently loaded in a hard-coded way. It can however be moved by drag and drop.
+* When dragging one of the corner points, the most nearby coordinate of the polygon will highlight; at drop, the corner point is connected to this most nearby coordinate of the polygon. This is the default so called 'snap-strategy'. The snap-strategy however can also be set to 'NONE' (the corner moves to the mouse position at (drag-)drop) or 'NEARBY' (the corner moves to the mouse position at (drag-)drop unless it is nearby one of the polygon coordinates; in the latter case it is set to that coordinate).
+
+=== Assignment
+
+You will not be surprised that we use JavaFX Properties and -Bindings to wire everything together; if the coordinate Properties of the triangle corners change, all calculations and visualizations will update accordingly. 
+
+A triangle is determined by three points, A, B, C.
+The sides are called a,b, and c, where _a_ is opposite point *A* etc.
+[red]#A#, [red]#a#, [green]#B#, [green]#b#, [blue]#C#, and [blue]#c#, have the colours [red]#red#, [green]#green#, and [blue]#blue#.
+
+The length of a side is determined by the formula of Pythagoras, using the start and end coordinates of that side (two out of the three corner coordinates): the length is the  *square root of (the squared difference between the x-values plus the squared difference  between the y-values*. The [blue]#length c# between [red]#A# and [green]#B# would be sqrt( (xA-xB) * (xA-xB) + (yA-yB) * (yA-yB))
+
+With lengths a, b, and c  the area of a triangle can be determined with https://en.wikipedia.org/wiki/Heron%27s_formula[Heron's formula]. Don't get overwhelmed, the only two simple formula's you need are the ones to calculate _A_ and _s_ as written immediately at the beginning of the 'Formulation' paragraph.
+
+image::../images/triangulate.png[title="Screenshot of FXTriangulator widget application"]
+
+* You have three lines, red, green and blue AND three circles, also red, green and blue.
+* In all cases the circle is opposite the line of the same color.
+* The lines connect the circles of the _other_ colors.
+
+==== ToDO
+
+* Open the FXTriangulate Assignment project and run the tests. You'll notice that some fail.  The GUI tests will also succeed after properly implementing the BindingBusiness, so you don't need to worry about these. We should have used mocking ;-) and that's even not a joke. Work todo in letting the tests succeed... but first go to the next bullet. +  
+Remark for Mac users: there are UI tests involved: the GUI test execution only works properly if the application that initiates the GUI test (e.g. NetBeans or the command line if you start NetBeans from the command line) has authorization to 'control your computer'. Go to Settings / Security & Privacy / Privacy / Accessibility to adapt the authorizations.)
+
+* *Study the available code!* All methods, especially in the BindingBusiness are documented by Javadoc!
+
+* You can find the test descriptions and the methods to be tested in the source code. +
+Look for the todo's by selecting 'ActionItems' of the 'Window' menu item in NetBeans IDE. An ActionItem is simply a text starting with //TODO; using these as developer might be good practice as well to document and easily find todo's in your code. There is only some work in the BindingBusinessTest and the BindingBusiness classes respectively. In the test class, the documentation at the TODO explains pretty step-by-step what you need to do. +
+In case you want to run your application in Netbeans, always run it on 'project level' (by right-clicking it and select 'Run...') instead of by running on file level.
+
+[TIP]
+====
+If one of the given tests, in particular GUITests.tLength fails on your machine, it may have to do
+with the locale (Country and Language settings) of your machine. The tests assume that you are using the en_US locale.
+====
+
+==== Run your JavaFX application outside of your IDE
+
+Especially after completing a nice application, you don't want to run it from your IDE only. From your project root folder, you can generate a zip-file that includes your program, but also all Java necessities to run it on a different machine. Run the following command:
+
+[source,sh]
+----
+mvn -P fx -Dexec.mainClass=fxtriangulate.App javafx:jlink
+----
+
+In your target folder, a zip file will be generated. After unzipping, from the folder in which you did the unzip, run the following command to execute the JavaFX app:
+
+[source,sh]
+----
+bin/java -m fxtriangulate/fxtriangulate.App
+----
+
+When running the command in the above example, the file [black]*target/fxtriangulate.zip* contains a complete image for the application.
+You should be able to deploy it on another machine with the same architecture. Because the image brings along its own java virtual machine and
+libraries, you do not have to have java installed on the target machine.
+This way of deployment is very similar to what you see in app stores on mobile devices. The app brings along its complete set of
+required dependencies and resources. The advantages are easy deployment. The disadvantage is big images, which take up a lot of space.
+But that appears to be a minor problem nowadays. And since the image created by jlink contains only the required parts of the JDK and
+not all of it, there is a gain in using [blue]*jlink* as a path to deployment. The trimming down of the image is one of the features made possible by the Java Platform Module System.
+
+:sectnums:
