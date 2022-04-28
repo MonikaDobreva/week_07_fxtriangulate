@@ -97,8 +97,22 @@ public class BindingBusinessTest {
         // Ask the bindingBusiness for an areaBinding
         // Assert that the areaBinding value is equal to the expected area of 
         //   your triangle (depending on the chosen Circles). Use isCloseTo.
-        //TODO 1 Test the areaBinding
-        fail( "testAreaBinding not yet implemented. Review the code and comment or delete this line" );
+
+        BindingBusiness bindingBusiness = new BindingBusiness();
+        Circle circle = new Circle(0, 0, 10, Color.CORAL);
+        Circle circle2 = new Circle(30, 0, 10, Color.CORAL);
+        Circle circle3 = new Circle(0, 40, 10, Color.CORAL);
+
+        Line line = new Line();
+        Line line2 = new Line();
+        Line line3 = new Line();
+
+        bindingBusiness.setCornerCirclesAndConnectLines(circle, circle2, circle3, line, line2, line3);
+        DoubleBinding ab = bindingBusiness.areaBinding();
+
+        assertThat(1200.0D/2).isCloseTo(ab.get(), within(0.01));
+
+        //fail( "testAreaBinding not yet implemented. Review the code and comment or delete this line" );
     }
 
     /**
@@ -126,7 +140,33 @@ public class BindingBusinessTest {
         //   is equal to their expected length (depending on your chosen Circles). 
         //   Use isCloseTo for your assertion.
         
-        //TODO 3 Test lengthBinding( String lineName)
-        fail( "testLengthBinding not yet implemented. Review the code and comment or delete this line" );
+        BindingBusiness bindingBusiness = new BindingBusiness();
+        Circle redCircle = new Circle(10, 10, 10, Color.CORAL);
+        Circle greenCircle = new Circle(10, 50, 10, Color.CORAL);
+        Circle blueCircle = new Circle(40, 10, 10, Color.CORAL);
+
+        Line redLine = new Line();
+        Line greenLine = new Line();
+        Line blueLine = new Line();
+
+        redLine.setId(redLineID);
+        greenLine.setId(greenLineID);
+        blueLine.setId(blueLineID);
+
+        bindingBusiness.connect(redLine, blueCircle, greenCircle);
+        bindingBusiness.connect(greenLine, blueCircle, redCircle);
+        bindingBusiness.connect(blueLine, redCircle, greenCircle);
+
+        DoubleBinding red = bindingBusiness.lengthBinding(redLineID);
+        DoubleBinding green = bindingBusiness.lengthBinding(greenLineID);
+        DoubleBinding blue = bindingBusiness.lengthBinding(blueLineID);
+
+        SoftAssertions.assertSoftly(softly -> {
+            softly.assertThat(50.0).isCloseTo(red.get(), within(0.01));
+            softly.assertThat(40.0).isCloseTo(blue.get(), within(0.01));
+            softly.assertThat(30.0).isCloseTo(green.get(), within(0.01));
+        });
+
+        //fail( "testLengthBinding not yet implemented. Review the code and comment or delete this line" );
     }
 }

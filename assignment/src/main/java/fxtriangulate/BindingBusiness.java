@@ -179,8 +179,11 @@ class BindingBusiness {
 
             @Override
             protected double computeValue() {
-                //TODO 2 Implement method based on lengthA, lengthB and lengthC
-                return 0;
+                double a = lengthA.get();
+                double b = lengthB.get();
+                double c = lengthC.get();
+                double s = (a + b + c) / 2;
+                return Math.sqrt(s * (s - a) * (s - b) * (s - c));
             }
         };
 
@@ -275,7 +278,25 @@ class BindingBusiness {
         // based on its end points using Pythagoras.
 
         //TODO 4 Create and return the binding
-        return Bindings.createDoubleBinding(() -> 0d); // Return your binding instead!
+        return new DoubleBinding() {
+            {
+                bind(startX, startY, endX, endY);
+            }
+
+            @Override
+            protected double computeValue() {
+                double x = endX.get() - startX.get();
+                System.out.println("x = " + x);
+                double y = endY.get() - startY.get();
+                System.out.println("y = " + y);
+
+                double result1 = Math.sqrt(x * x + y * y);
+                System.out.println("result = " + result1);
+                return result1;
+            }
+
+        };
+        //return Bindings.createDoubleBinding(() -> 0d); // Return your binding instead!
     }
 
     /**
